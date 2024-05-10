@@ -3,7 +3,6 @@ package com.absensi.absensi.controllers;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.absensi.absensi.database.entities.AbsensiEntity;
 import com.absensi.absensi.dto.AbsensiRequest;
 import com.absensi.absensi.services.AbsensiService;
 

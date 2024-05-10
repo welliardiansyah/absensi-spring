@@ -4,6 +4,7 @@ import java.util.*;
 import java.util.stream.Collectors;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.dao.DataAccessException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseCookie;
 import org.springframework.http.ResponseEntity;
@@ -24,10 +25,13 @@ import com.absensi.absensi.database.repository.DivisionRepository;
 import com.absensi.absensi.database.repository.RolesRepository;
 import com.absensi.absensi.database.repository.UsersRepository;
 import com.absensi.absensi.dto.LoginRequest;
+import com.absensi.absensi.dto.NikRequest;
 import com.absensi.absensi.dto.RegisterRequest;
+import com.absensi.absensi.exception.NotFoundException;
 import com.absensi.absensi.response.ResponseHandler;
 import com.absensi.absensi.security.jwt.JwtUtils;
 import com.absensi.absensi.security.service.UserDetailsImpl;
+
 
 @CrossOrigin(origins = "*", maxAge = 3600)
 @RestController
@@ -50,6 +54,45 @@ public class AuthController {
 
     @Autowired
     JwtUtils jwtUtils;
+
+    @PostMapping("/nik")
+    public ResponseEntity<Object> loginByNik(@RequestBody NikRequest data) {
+        Optional<UsersEntity> getUsers = usersRepository.findByNik(data.getNik());
+        UsersEntity user = getUsers.get();
+        try {
+            Authentication authentication = authenticationManager
+            .authenticate(new UsernamePasswordAuthenticationToken(user.getEmail(), data.getPassword()));
+            SecurityContextHolder.getContext().setAuthentication(authentication);
+
+            UserDetailsImpl userDetails = (UserDetailsImpl) authentication.getPrincipal();
+
+            String jwtToken = jwtUtils.generateJwtToken(authentication);
+
+            List<String> roles = userDetails.getAuthorities().stream()
+                .map(item -> item.getAuthority())
+                .collect(Collectors.toList());
+
+            Map<String, Object> userresponse = new TreeMap<>();
+            userresponse.put("id", userDetails.getId());
+            userresponse.put("division", userDetails.getDivision());
+            userresponse.put("email", userDetails.getEmail());
+            userresponse.put("fullname", userDetails.getFullname());
+            userresponse.put("address", userDetails.getAddress());
+            userresponse.put("nik", userDetails.getNik());
+            userresponse.put("phones", userDetails.getPhones());
+            userresponse.put("roles", roles);
+            userresponse.put("token", jwtToken);
+
+            return ResponseHandler.successResponseBuilder(
+                "Login users successfully!.",
+                HttpStatus.OK,
+                userresponse
+            );
+        } catch (DataAccessException e) {
+            throw new NotFoundException("Not found data!." + e.getMessage());
+        }
+    }
+    
 
     @PostMapping("/login")
     public ResponseEntity<?> authenticateUser(@RequestBody LoginRequest loginRequest) {
@@ -88,6 +131,13 @@ public class AuthController {
         if (usersRepository.existsByEmail(data.getEmail())) {
             return ResponseHandler.errorResponseBuilder(
                 "Email already exists!",
+                HttpStatus.BAD_REQUEST
+            );
+        }
+
+        if (usersRepository.existsByNik(data.getNik())) {
+            return ResponseHandler.errorResponseBuilder(
+                "NIK ini sudah digunakan!",
                 HttpStatus.BAD_REQUEST
             );
         }
@@ -205,26 +255,30 @@ public class AuthController {
     @GetMapping("/profile")
     // @PreAuthorize("hasRole('USER')")
     public ResponseEntity<?> getUserProfile() {
-        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-        UserDetailsImpl userDetails = (UserDetailsImpl) authentication.getPrincipal();
+        try {
+            Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+            UserDetailsImpl userDetails = (UserDetailsImpl) authentication.getPrincipal();
 
-        Map<String, Object> userProfile = new HashMap<>();
-        userProfile.put("id", userDetails.getId());
-        userProfile.put("division", userDetails.getDivision());
-        userProfile.put("email", userDetails.getEmail());
-        userProfile.put("fullname", userDetails.getFullname());
-        userProfile.put("address", userDetails.getAddress());
-        userProfile.put("nik", userDetails.getNik());
-        userProfile.put("phones", userDetails.getPhones());
-        userProfile.put("roles", userDetails.getAuthorities().stream()
-                .map(item -> item.getAuthority())
-                .collect(Collectors.toList()));
+            Map<String, Object> userProfile = new HashMap<>();
+            userProfile.put("id", userDetails.getId());
+            userProfile.put("division", userDetails.getDivision());
+            userProfile.put("email", userDetails.getEmail());
+            userProfile.put("fullname", userDetails.getFullname());
+            userProfile.put("address", userDetails.getAddress());
+            userProfile.put("nik", userDetails.getNik());
+            userProfile.put("phones", userDetails.getPhones());
+            userProfile.put("roles", userDetails.getAuthorities().stream()
+                    .map(item -> item.getAuthority())
+                    .collect(Collectors.toList()));
 
-        return ResponseHandler.successResponseBuilder(
-                "User profile retrieved successfully!",
-                HttpStatus.OK,
-                userProfile
-        );
+            return ResponseHandler.successResponseBuilder(
+                    "User profile retrieved successfully!",
+                    HttpStatus.OK,
+                    userProfile
+            );
+        } catch (DataAccessException e) {
+            throw new NotFoundException("Not found data!." + e.getMessage());
+        }
     }
 
 

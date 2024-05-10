@@ -7,7 +7,13 @@ import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.UpdateTimestamp;
 
 @Entity
-@Table(name = "users_profiles", uniqueConstraints = {@UniqueConstraint(columnNames = "email"), @UniqueConstraint(columnNames = "phones")})
+@Table(
+    name = "users_profiles", uniqueConstraints = 
+    {
+        @UniqueConstraint(columnNames = "email"), 
+        @UniqueConstraint(columnNames = "phones"), 
+        @UniqueConstraint(columnNames = "nik")
+    })
 public class UsersEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)

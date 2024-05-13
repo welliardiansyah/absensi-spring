@@ -3,6 +3,7 @@ import java.util.UUID;
 
 import org.springframework.http.ResponseEntity;
 
+import com.absensi.absensi.database.entities.ERole;
 import com.absensi.absensi.database.entities.RolesEntity;
 
 public interface RoleService {
@@ -11,5 +12,5 @@ public interface RoleService {
     public ResponseEntity<Object> deleteRole(UUID id);
     Object getDetails(UUID id);
     ResponseEntity<Object> getAll();
-    ResponseEntity<Object> getListing(int page, int size, String search);
+    ResponseEntity<Object> getListing(int page, int size, ERole search);
 }

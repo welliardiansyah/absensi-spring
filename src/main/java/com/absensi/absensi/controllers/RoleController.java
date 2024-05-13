@@ -9,6 +9,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.absensi.absensi.database.entities.ERole;
 import com.absensi.absensi.database.entities.RolesEntity;
 import com.absensi.absensi.services.RoleService;
 import org.springframework.web.bind.annotation.PutMapping;
@@ -56,7 +57,7 @@ public class RoleController {
     public ResponseEntity<Object> getListting(
             @RequestParam(defaultValue = "1") int page,
             @RequestParam(defaultValue = "10") int size,
-            @RequestParam(required = false) String search
+            @RequestParam(required = false) ERole search
     ) {
         return roleService.getListing(page, size, search);
     }

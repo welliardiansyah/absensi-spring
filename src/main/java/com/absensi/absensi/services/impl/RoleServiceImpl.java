@@ -6,16 +6,21 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
+import org.springframework.data.jpa.domain.Specification;
 import org.springframework.dao.DataAccessException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
+import com.absensi.absensi.database.entities.DivisionEntity;
+import com.absensi.absensi.database.entities.ERole;
 import com.absensi.absensi.database.entities.RolesEntity;
 import com.absensi.absensi.database.repository.RolesRepository;
 import com.absensi.absensi.exception.NotFoundException;
 import com.absensi.absensi.response.ResponseHandler;
 import com.absensi.absensi.services.RoleService;
+
+import jakarta.persistence.criteria.Predicate;
 
 @Service
 public class RoleServiceImpl implements RoleService {
@@ -129,38 +134,30 @@ public class RoleServiceImpl implements RoleService {
     }
 
     @Override
-    public ResponseEntity<Object> getListing(int page, int size, String search) {
+    public ResponseEntity<Object> getListing(int page, int size, ERole search) {
         try {
-            if (page < 1) {
-                page = 1;
-            }
+            Pageable pageable = PageRequest.of(page, size);
 
-            int adjustedPage = page - 1;
-            Pageable pageable = PageRequest.of(adjustedPage, size, Sort.by("name").ascending());
+            Specification<RolesEntity> specification = (root, query, criteriaBuilder) -> {
+                List<Predicate> predicates = new ArrayList<>();
+                if (search != null) {
+                    predicates.add(criteriaBuilder.equal(root.get("name"), search.toString()));
+                }
+                return criteriaBuilder.and(predicates.toArray(new Predicate[0]));
+            };
 
-            Page<RolesEntity> rolesPage;
-            if (search != null && !search.isEmpty()) {
-                rolesPage = rolesRepository.findByNameContainingIgnoreCase(search, pageable);
-            } else {
-                rolesPage = rolesRepository.findAll(pageable);
-            }
-
-            List<RolesEntity> rolesList = rolesPage.getContent();
-
-            long totalItems = rolesPage.getTotalElements();
-            int totalPages = rolesPage.getTotalPages();
+            Page<RolesEntity> divisionsPage = rolesRepository.findAll(specification, pageable);
 
             Map<String, Object> response = new HashMap<>();
-            response.put("data", rolesList);
-            response.put("totalItems", totalItems);
-            response.put("totalPages", totalPages);
-            response.put("currentPage", page);
+            response.put("data", divisionsPage.getContent());
+            response.put("totalItems", divisionsPage.getTotalElements());
+            response.put("totalPages", divisionsPage.getTotalPages());
+            response.put("currentPage", divisionsPage.getNumber() + 1);
 
             return ResponseEntity.ok().body(response);
         } catch (Exception e) {
-            throw new NotFoundException("Not found data!." + e.getMessage());
+            throw new NotFoundException("Data not found!." + e.getMessage());
         }
     }
-
 
 }

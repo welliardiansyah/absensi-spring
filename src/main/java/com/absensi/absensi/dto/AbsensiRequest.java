@@ -12,6 +12,7 @@ public class AbsensiRequest {
     private Double longitude;
     private String description;
     private UUID users;
+    private UUID id;
 
     public EAbsensi getAbsensiType() {
         return types;
@@ -60,5 +61,11 @@ public class AbsensiRequest {
     }
     public void setUsers(UUID users) {
         this.users = users;
+    }
+    public UUID getid() {
+        return id;
+    }
+    public void setid(UUID id) {
+        this.id = id;
     }
 }

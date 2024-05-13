@@ -2,7 +2,9 @@ package com.absensi.absensi.controllers;
 
 import org.springframework.web.bind.annotation.RestController;
 
-import com.absensi.absensi.database.entities.DivisionEntity;
+import com.absensi.absensi.database.entities.EAbsensi;
+import com.absensi.absensi.database.entities.EDivision;
+import com.absensi.absensi.dto.DivisionRequest;
 import com.absensi.absensi.services.DivisionService;
 
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -29,39 +31,41 @@ public class DivisionController {
         this.divisionService = divisionService;
     }
 
-    @PostMapping("/")
-    public ResponseEntity<Object> createDivisions(@RequestBody DivisionEntity data) {
+    @PostMapping("/create")
+    public ResponseEntity<Object> createDivisions(@RequestBody DivisionRequest data) {
         return divisionService.createDivision(data);
     }
 
     @PutMapping("/{id}")
-    public ResponseEntity<Object> updateDivisions(@PathVariable String id, @RequestBody DivisionEntity data) {
-        data.setId(UUID.fromString(id));
+    public ResponseEntity<Object> updateDivisions(@PathVariable("id") UUID id, @RequestBody DivisionRequest data) {
+        data.setId(id);
         return divisionService.updateDivision(data);
     }
 
-    @DeleteMapping("{id}")
-    public ResponseEntity<Object> deleteRole(@PathVariable("id") UUID id) {
+    @DeleteMapping("/{id}")
+    public ResponseEntity<Object> deleteDivisions(@PathVariable("id") UUID id) {
         return divisionService.deleteDivision(id);
     }
 
-    @GetMapping("{id}")
-    public Object getDetailsUsers(@PathVariable("id") UUID id) {
+    @GetMapping("/{id}")
+    public ResponseEntity<Object> getDetail(@PathVariable("id") UUID id) {
         return divisionService.getDetails(id);
     }
 
     @GetMapping("/all")
-    public Object getAll() {
+    public ResponseEntity<Object> getAll() {
         return divisionService.getAll();
     }
 
     @GetMapping("/listting")
     public ResponseEntity<Object> getListting(
-            @RequestParam(defaultValue = "1") int page,
-            @RequestParam(defaultValue = "10") int size,
-            @RequestParam(required = false) String search
+        @RequestParam(defaultValue = "0") final Integer page,
+        @RequestParam(defaultValue = "10") final Integer size,
+        @RequestParam(required = false) final EDivision search,
+        @RequestParam(required = false) final UUID superior,
+        @RequestParam(required = false) final UUID manager,
+        @RequestParam(required = false) final UUID leader
     ) {
-        return divisionService.getListing(page, size, search);
+        return divisionService.getListing(page, size, search, superior, manager, leader);
     }
-
 }

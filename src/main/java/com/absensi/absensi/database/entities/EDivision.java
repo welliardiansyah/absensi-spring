@@ -8,4 +8,9 @@ public enum EDivision {
     HEAD,
     IT,
     UNIT,
+    HRD,
+    PURCHASING,
+    FINANCE,
+    SALES,
+    MARKETING,;
 }

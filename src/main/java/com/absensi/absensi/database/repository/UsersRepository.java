@@ -1,6 +1,9 @@
 package com.absensi.absensi.database.repository;
 import java.util.*;
 
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.jpa.domain.Specification;
 import org.springframework.data.jpa.repository.JpaRepository;
 
 import com.absensi.absensi.database.entities.DivisionEntity;
@@ -12,4 +15,5 @@ public interface UsersRepository extends JpaRepository<UsersEntity, UUID> {
     Boolean existsByEmail(String email);
     Boolean existsByNik(String nik);
     List<UsersEntity> findByDivision(DivisionEntity division);
+    Page<UsersEntity> findAll(Specification<UsersEntity> specification, Pageable pageable);
 }

@@ -1,10 +1,10 @@
 package com.absensi.absensi.services.impl;
 
-import java.util.ArrayList;
-import java.util.HashMap;
+import java.util.*;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
+import java.util.TreeMap;
 import java.util.UUID;
 import java.util.function.Consumer;
 
@@ -13,16 +13,13 @@ import org.springframework.dao.DataAccessException;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
-import org.springframework.data.domain.Sort;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
-import com.absensi.absensi.database.entities.AbsensiEntity;
 import com.absensi.absensi.database.entities.DivisionEntity;
 import com.absensi.absensi.database.entities.EDivision;
-import com.absensi.absensi.database.entities.RolesEntity;
 import com.absensi.absensi.database.entities.UsersEntity;
 import com.absensi.absensi.database.repository.DivisionRepository;
 import com.absensi.absensi.database.repository.UsersRepository;
@@ -171,7 +168,7 @@ public class DivisionServiceImpl implements DivisionService {
             if (divisi.isPresent()) {
                 DivisionEntity divisions = divisi.get();
 
-                Map<String, Object> responseData = new HashMap<>();
+                Map<String, Object> responseData = new TreeMap<>();
                 responseData.put("id", divisions.getId());
                 responseData.put("name", divisions.getName());
                 responseData.put("is_active", divisions.getIs_actived());
@@ -212,7 +209,7 @@ public class DivisionServiceImpl implements DivisionService {
     }
 
     private Map<String, Object> getUserDataMap(UsersEntity user) {
-        Map<String, Object> userData = new HashMap<>();
+        Map<String, Object> userData = new TreeMap<>();
         userData.put("id", user.getId());
         userData.put("fullname", user.getFullname());
         userData.put("nik", user.getNik());
@@ -233,7 +230,7 @@ public class DivisionServiceImpl implements DivisionService {
                 List<Map<String, Object>> responseDataList = new ArrayList<>();
 
                 for (DivisionEntity divisions : divisionsList) {
-                    Map<String, Object> responseData = new HashMap<>();
+                    Map<String, Object> responseData = new TreeMap<>();
                     responseData.put("id", divisions.getId());
                     responseData.put("name", divisions.getName());
                     responseData.put("is_active", divisions.getIs_actived());
@@ -304,7 +301,7 @@ public class DivisionServiceImpl implements DivisionService {
 
             List<Map<String, Object>> responseDataList = new ArrayList<>();
             for (DivisionEntity division : divisionsPage.getContent()) {
-                Map<String, Object> responseData = new HashMap<>();
+                Map<String, Object> responseData = new TreeMap<>();
                 responseData.put("id", division.getId());
                 responseData.put("name", division.getName());
                 responseData.put("is_active", division.getIs_actived());
@@ -331,7 +328,7 @@ public class DivisionServiceImpl implements DivisionService {
                 responseDataList.add(responseData);
             }
 
-            Map<String, Object> responseMap = new HashMap<>();
+            Map<String, Object> responseMap = new TreeMap<>();
             responseMap.put("totalItems", divisionsPage.getTotalElements());
             responseMap.put("totalPages", divisionsPage.getTotalPages());
             responseMap.put("currentPage", divisionsPage.getNumber() + 1);

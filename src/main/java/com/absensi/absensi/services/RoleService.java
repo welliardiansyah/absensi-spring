@@ -10,7 +10,7 @@ public interface RoleService {
     public ResponseEntity<Object> createRole(RolesEntity rolesEntity);
     public ResponseEntity<Object> updateRole(RolesEntity rolesEntity);
     public ResponseEntity<Object> deleteRole(UUID id);
-    Object getDetails(UUID id);
-    ResponseEntity<Object> getAll();
-    ResponseEntity<Object> getListing(int page, int size, ERole search);
+    public Object getDetails(UUID id);
+    public ResponseEntity<Object> getAll();
+    public ResponseEntity<Object> getListing(int page, int size, ERole search);
 }

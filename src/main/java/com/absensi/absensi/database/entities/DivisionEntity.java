@@ -23,25 +23,16 @@ public class DivisionEntity {
 
     private Boolean is_actived;
 
-    @Column(nullable = true)
-    private String time_start;
-
-    @Column(nullable = true)
-    private String time_end;
-
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "superior_id")
-    @JsonIgnore
     private UsersEntity superior = null;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "manager_id")
-    @JsonIgnore
     private UsersEntity manager = null;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "leader_id")
-    @JsonIgnore
     private UsersEntity leader = null;
 
     @Column(updatable = false, name = "created_at")
@@ -61,8 +52,6 @@ public class DivisionEntity {
         this.id = id;
         this.name = name;
         this.is_actived = is_actived;
-        this.time_start = time_start;
-        this.time_end = time_end;
         this.superior = superior;
         this.manager = manager;
         this.leader = leader;
@@ -92,22 +81,6 @@ public class DivisionEntity {
 
     public void setIs_actived(Boolean is_actived) {
         this.is_actived = is_actived;
-    }
-
-    public String getTime_start() {
-        return time_start;
-    }
-
-    public void setTime_start(String time_start) {
-        this.time_start = time_start;
-    }
-
-    public String getTime_end() {
-        return time_end;
-    }
-
-    public void setTime_end(String time_end) {
-        this.time_end = time_end;
     }
 
     public UsersEntity getSuperior() {

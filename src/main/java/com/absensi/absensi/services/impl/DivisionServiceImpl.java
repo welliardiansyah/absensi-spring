@@ -72,8 +72,6 @@ public class DivisionServiceImpl implements DivisionService {
             DivisionEntity division = new DivisionEntity();
             division.setName(data.getName());
             division.setIs_actived(data.getIs_actived());
-            division.setTime_start(data.getTime_start());
-            division.setTime_end(data.getTime_end());
             division.setSuperior(superiorId);
             division.setManager(managerId);
             division.setLeader(leaderId);
@@ -102,8 +100,6 @@ public class DivisionServiceImpl implements DivisionService {
 
         division.setName(data.getName());
         division.setIs_actived(data.getIs_actived());
-        division.setTime_start(data.getTime_start());
-        division.setTime_end(data.getTime_end());
 
         updateReference(data.getSuperior(), division::setSuperior, "User superior");
         updateReference(data.getManager(), division::setManager, "User manager");
@@ -172,8 +168,6 @@ public class DivisionServiceImpl implements DivisionService {
                 responseData.put("id", divisions.getId());
                 responseData.put("name", divisions.getName());
                 responseData.put("is_active", divisions.getIs_actived());
-                responseData.put("time_start", divisions.getTime_start());
-                responseData.put("time_end", divisions.getTime_end());
                 responseData.put("created_at", divisions.getCreatedAt());
                 responseData.put("updated_at", divisions.getUpdatedAt());
 
@@ -234,8 +228,6 @@ public class DivisionServiceImpl implements DivisionService {
                     responseData.put("id", divisions.getId());
                     responseData.put("name", divisions.getName());
                     responseData.put("is_active", divisions.getIs_actived());
-                    responseData.put("time_start", divisions.getTime_start());
-                    responseData.put("time_end", divisions.getTime_end());
                     responseData.put("created_at", divisions.getCreatedAt());
                     responseData.put("updated_at", divisions.getUpdatedAt());
 
@@ -305,8 +297,6 @@ public class DivisionServiceImpl implements DivisionService {
                 responseData.put("id", division.getId());
                 responseData.put("name", division.getName());
                 responseData.put("is_active", division.getIs_actived());
-                responseData.put("time_start", division.getTime_start());
-                responseData.put("time_end", division.getTime_end());
                 responseData.put("created_at", division.getCreatedAt());
                 responseData.put("updated_at", division.getUpdatedAt());
 

@@ -10,7 +10,6 @@ import org.springframework.http.ResponseCookie;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
-import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -20,9 +19,11 @@ import com.absensi.absensi.database.entities.DivisionEntity;
 import com.absensi.absensi.database.entities.EDivision;
 import com.absensi.absensi.database.entities.ERole;
 import com.absensi.absensi.database.entities.RolesEntity;
+import com.absensi.absensi.database.entities.ShiftEntity;
 import com.absensi.absensi.database.entities.UsersEntity;
 import com.absensi.absensi.database.repository.DivisionRepository;
 import com.absensi.absensi.database.repository.RolesRepository;
+import com.absensi.absensi.database.repository.ShiftRepository;
 import com.absensi.absensi.database.repository.UsersRepository;
 import com.absensi.absensi.dto.LoginRequest;
 import com.absensi.absensi.dto.NikRequest;
@@ -50,6 +51,9 @@ public class AuthController {
     DivisionRepository divisionRepository;
 
     @Autowired
+    ShiftRepository shiftRepository;
+
+    @Autowired
     PasswordEncoder encoder;
 
     @Autowired
@@ -58,23 +62,33 @@ public class AuthController {
     @PostMapping("/nik")
     public ResponseEntity<Object> loginByNik(@RequestBody NikRequest data) {
         Optional<UsersEntity> getUsers = usersRepository.findByNik(data.getNik());
-        UsersEntity user = getUsers.get();
+        UsersEntity user = getUsers.orElseThrow(() -> new NotFoundException("User not found"));
+
         try {
             Authentication authentication = authenticationManager
-            .authenticate(new UsernamePasswordAuthenticationToken(user.getEmail(), data.getPassword()));
+                    .authenticate(new UsernamePasswordAuthenticationToken(user.getEmail(), data.getPassword()));
             SecurityContextHolder.getContext().setAuthentication(authentication);
 
             UserDetailsImpl userDetails = (UserDetailsImpl) authentication.getPrincipal();
-
             String jwtToken = jwtUtils.generateJwtToken(authentication);
 
+            List<Map<String, Object>> divisions = user.getDivision().stream()
+            .map(division -> {
+                Map<String, Object> divisionMap = new HashMap<>();
+                divisionMap.put("id", division.getId());
+                return divisionMap;
+            })
+            .collect(Collectors.toList());
+            Map<String, Object> firstDivision = divisions.get(0);
+            UUID id = (UUID) firstDivision.get("id");
+            List<ShiftEntity> shifts = shiftRepository.findByDivisions_Id(id);
+
             List<String> roles = userDetails.getAuthorities().stream()
-                .map(item -> item.getAuthority())
-                .collect(Collectors.toList());
+                    .map(item -> item.getAuthority())
+                    .collect(Collectors.toList());
 
             Map<String, Object> userresponse = new TreeMap<>();
             userresponse.put("id", userDetails.getId());
-            userresponse.put("division", userDetails.getDivision());
             userresponse.put("email", userDetails.getEmail());
             userresponse.put("fullname", userDetails.getFullname());
             userresponse.put("address", userDetails.getAddress());
@@ -82,18 +96,18 @@ public class AuthController {
             userresponse.put("phones", userDetails.getPhones());
             userresponse.put("roles", roles);
             userresponse.put("token", jwtToken);
+            userresponse.put("shift", shifts);
 
             return ResponseHandler.successResponseBuilder(
-                "Login users successfully!.",
-                HttpStatus.OK,
-                userresponse
+                    "Login users successfully!.",
+                    HttpStatus.OK,
+                    userresponse
             );
         } catch (DataAccessException e) {
             throw new NotFoundException("Not found data!." + e.getMessage());
         }
     }
     
-
     @PostMapping("/login")
     public ResponseEntity<?> authenticateUser(@RequestBody LoginRequest loginRequest) {
         Authentication authentication = authenticationManager
@@ -101,28 +115,40 @@ public class AuthController {
 
         SecurityContextHolder.getContext().setAuthentication(authentication);
         UserDetailsImpl userDetails = (UserDetailsImpl) authentication.getPrincipal();
-
         String jwtToken = jwtUtils.generateJwtToken(authentication);
+
+        List<DivisionEntity> divisions = (List<DivisionEntity>) userDetails.getDivision();
+        UUID id = null;
+        List<ShiftEntity> shifts = new ArrayList<>();
+        if (!divisions.isEmpty()) {
+            id = divisions.get(0).getId();
+            shifts = shiftRepository.findByDivisions_Id(id);
+        }
 
         List<String> roles = userDetails.getAuthorities().stream()
             .map(item -> item.getAuthority())
             .collect(Collectors.toList());
 
-        Map<String, Object> userresponse = new TreeMap<>();
-        userresponse.put("id", userDetails.getId());
-        userresponse.put("division", userDetails.getDivision());
-        userresponse.put("email", userDetails.getEmail());
-        userresponse.put("fullname", userDetails.getFullname());
-        userresponse.put("address", userDetails.getAddress());
-        userresponse.put("nik", userDetails.getNik());
-        userresponse.put("phones", userDetails.getPhones());
-        userresponse.put("roles", roles);
-        userresponse.put("token", jwtToken);
+        Map<String, Object> userResponse = new TreeMap<>();
+        userResponse.put("id", userDetails.getId());
+        userResponse.put("division", userDetails.getDivision());
+        userResponse.put("email", userDetails.getEmail());
+        userResponse.put("fullname", userDetails.getFullname());
+        userResponse.put("address", userDetails.getAddress());
+        userResponse.put("nik", userDetails.getNik());
+        userResponse.put("phones", userDetails.getPhones());
+        userResponse.put("roles", roles);
+        userResponse.put("token", jwtToken);
+        userResponse.put("shifts", shifts);
+
+        if (id != null) {
+            userResponse.put("firstDivisionId", id);
+        }
 
         return ResponseHandler.successResponseBuilder(
             "Login users successfully!.",
             HttpStatus.OK,
-            userresponse
+            userResponse
         );
     }
 
@@ -259,9 +285,17 @@ public class AuthController {
             Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
             UserDetailsImpl userDetails = (UserDetailsImpl) authentication.getPrincipal();
 
+            List<DivisionEntity> divisions = (List<DivisionEntity>) userDetails.getDivision();
+            UUID id = null;
+            List<ShiftEntity> shifts = new ArrayList<>();
+            if (!divisions.isEmpty()) {
+                id = divisions.get(0).getId();
+                shifts = shiftRepository.findByDivisions_Id(id);
+            }
+
             Map<String, Object> userProfile = new HashMap<>();
             userProfile.put("id", userDetails.getId());
-            userProfile.put("division", userDetails.getDivision());
+            userProfile.put("shift", shifts);
             userProfile.put("email", userDetails.getEmail());
             userProfile.put("fullname", userDetails.getFullname());
             userProfile.put("address", userDetails.getAddress());

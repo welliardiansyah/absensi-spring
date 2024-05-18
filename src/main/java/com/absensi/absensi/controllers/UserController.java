@@ -3,16 +3,11 @@ package com.absensi.absensi.controllers;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
-
-import com.absensi.absensi.database.entities.ERole;
-import com.absensi.absensi.database.entities.UsersEntity;
 import com.absensi.absensi.dto.UpdateUserRequest;
 import com.absensi.absensi.services.UserService;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
-
 import java.util.*;
-
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;

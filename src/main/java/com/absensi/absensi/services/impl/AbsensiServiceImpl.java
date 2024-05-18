@@ -179,8 +179,6 @@ public class AbsensiServiceImpl implements AbsensiService{
                     divisionData.put("id", division.getId());
                     divisionData.put("name", division.getName());
                     divisionData.put("is_actived", division.getIs_actived());
-                    divisionData.put("time_start", division.getTime_start());
-                    divisionData.put("time_end", division.getTime_end());
                     divisionData.put("createdAt", division.getCreatedAt());
                     divisionData.put("updatedAt", division.getUpdatedAt());
                     divisionsData.add(divisionData);
@@ -254,8 +252,6 @@ public class AbsensiServiceImpl implements AbsensiService{
                     divisionData.put("id", division.getId());
                     divisionData.put("name", division.getName());
                     divisionData.put("is_actived", division.getIs_actived());
-                    divisionData.put("time_start", division.getTime_start());
-                    divisionData.put("time_end", division.getTime_end());
                     divisionData.put("createdAt", division.getCreatedAt());
                     divisionData.put("updatedAt", division.getUpdatedAt());
                     divisionsData.add(divisionData);
@@ -349,8 +345,6 @@ public class AbsensiServiceImpl implements AbsensiService{
                     divisionData.put("id", division.getId());
                     divisionData.put("name", division.getName());
                     divisionData.put("is_actived", division.getIs_actived());
-                    divisionData.put("time_start", division.getTime_start());
-                    divisionData.put("time_end", division.getTime_end());
                     divisionData.put("createdAt", division.getCreatedAt());
                     divisionData.put("updatedAt", division.getUpdatedAt());
                     divisionsData.add(divisionData);

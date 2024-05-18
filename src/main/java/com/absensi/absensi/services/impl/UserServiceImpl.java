@@ -231,6 +231,4 @@ public class UserServiceImpl implements UserService {
             throw new NotFoundException("Data tidak dapat ditemukan: " + e.getMessage());
         }
     }
-
-
 }

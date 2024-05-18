@@ -2,7 +2,6 @@ package com.absensi.absensi.controllers;
 
 import org.springframework.web.bind.annotation.RestController;
 
-import com.absensi.absensi.database.entities.EAbsensi;
 import com.absensi.absensi.database.entities.EDivision;
 import com.absensi.absensi.dto.DivisionRequest;
 import com.absensi.absensi.services.DivisionService;

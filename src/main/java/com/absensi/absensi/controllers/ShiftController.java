@@ -7,7 +7,6 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.absensi.absensi.database.entities.ShiftEntity;
 import com.absensi.absensi.dto.ShiftRequest;
 import com.absensi.absensi.services.ShiftService;
 import org.springframework.web.bind.annotation.PostMapping;

@@ -64,7 +64,6 @@ public class WebSecurityConfig {
                                 .requestMatchers("/api/v1/absension/**").permitAll()
                                 .requestMatchers("/api/v1/users/**").permitAll()
                                 .requestMatchers("/api/v1/shift/**").permitAll()
-                                .requestMatchers("/api/test/**").permitAll()
                                 .anyRequest().authenticated()
                 );
 

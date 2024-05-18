@@ -5,14 +5,12 @@ import java.util.*;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
-import org.springframework.data.domain.Sort;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.dao.DataAccessException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
-import com.absensi.absensi.database.entities.DivisionEntity;
 import com.absensi.absensi.database.entities.ERole;
 import com.absensi.absensi.database.entities.RolesEntity;
 import com.absensi.absensi.database.repository.RolesRepository;

@@ -21,7 +21,6 @@ import org.springframework.transaction.NoTransactionException;
 
 import com.absensi.absensi.database.entities.DivisionEntity;
 import com.absensi.absensi.database.entities.ShiftEntity;
-import com.absensi.absensi.database.entities.UsersEntity;
 import com.absensi.absensi.database.repository.DivisionRepository;
 import com.absensi.absensi.database.repository.ShiftRepository;
 import com.absensi.absensi.dto.ShiftRequest;

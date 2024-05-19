@@ -6,4 +6,5 @@ public enum EAbsensi {
     LEMBUR,
     IZIN,
     SAKIT,
+    TELAT,
 }

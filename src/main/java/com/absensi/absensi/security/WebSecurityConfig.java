@@ -63,6 +63,7 @@ public class WebSecurityConfig {
                                 .requestMatchers("/api/v1/divisions/**").permitAll()
                                 .requestMatchers("/api/v1/absension/**").permitAll()
                                 .requestMatchers("/api/v1/users/**").permitAll()
+                                .requestMatchers("/api/v1/user/photo/**").permitAll()
                                 .requestMatchers("/api/v1/shift/**").permitAll()
                                 .requestMatchers("/api/v1/izin/**").permitAll()
                                 .requestMatchers("/api/v1/image/**").permitAll()

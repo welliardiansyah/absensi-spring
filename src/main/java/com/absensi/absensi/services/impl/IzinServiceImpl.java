@@ -13,7 +13,6 @@ import org.springframework.dao.DataAccessException;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
-import org.springframework.data.domain.Sort;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -22,7 +21,6 @@ import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.server.ResponseStatusException;
 
 import com.absensi.absensi.database.entities.IzinEntity;
-import com.absensi.absensi.database.entities.EDivision;
 import com.absensi.absensi.database.entities.EIzin;
 import com.absensi.absensi.database.entities.UsersEntity;
 import com.absensi.absensi.database.repository.IzinRepository;

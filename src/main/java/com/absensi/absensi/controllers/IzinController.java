@@ -42,7 +42,6 @@ public class IzinController {
         @RequestParam("description") String description,
         @RequestParam("users") UUID users,
         @RequestParam("is_actived") Boolean is_actived) throws IllegalStateException, IOException {
-        System.out.println(users);
             IzinRequest data = new IzinRequest();
             data.setName(name);
             data.setDateStart(dateStart);

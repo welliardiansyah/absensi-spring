@@ -19,9 +19,7 @@ import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.GetMapping;
-
-
-
+import org.springframework.web.bind.annotation.ModelAttribute;
 
 @RestController
 @RequestMapping("/api/v1/izin")
@@ -35,42 +33,15 @@ public class IzinController {
 
     @PostMapping("")
     public ResponseEntity<Object> createIzin(
-        @RequestParam(value = "photo", required = false) MultipartFile photo,
-        @RequestParam("name") EIzin name,
-        @RequestParam("dateStart") String dateStart,
-        @RequestParam("dateEnd") String dateEnd,
-        @RequestParam("description") String description,
-        @RequestParam("users") UUID users,
-        @RequestParam("is_actived") Boolean is_actived) throws IllegalStateException, IOException {
-            IzinRequest data = new IzinRequest();
-            data.setName(name);
-            data.setDateStart(dateStart);
-            data.setDateEnd(dateEnd);
-            data.setDescription(description);
-            data.setPhoto(photo);
-            data.setUsers(users);
-            data.setIs_actived(is_actived);
+        @ModelAttribute IzinRequest data
+        ) throws IllegalStateException, IOException {
             return izinService.createIzin(data);
     }
 
     @PutMapping("/{id}")
     public ResponseEntity<Object> updateIzin(
         @PathVariable("id") UUID id,
-        @RequestParam(value = "photo", required = false) MultipartFile photo,
-        @RequestParam(value = "name") EIzin name,
-        @RequestParam(value = "dateStart") String dateStart,
-        @RequestParam(value = "dateEnd") String dateEnd,
-        @RequestParam(value = "description") String description,
-        @RequestParam(value = "users") UUID users,
-        @RequestParam(value = "is_actived") Boolean is_actived) throws IllegalStateException, IOException {
-            IzinRequest data = new IzinRequest();
-            data.setName(name);
-            data.setDateStart(dateStart);
-            data.setDateEnd(dateEnd);
-            data.setDescription(description);
-            data.setPhoto(photo);
-            data.setUsers(users);
-            data.setIs_actived(is_actived);
+        @ModelAttribute IzinRequest data) throws IllegalStateException, IOException {
             return izinService.updateIzin(id, data);
     }
 

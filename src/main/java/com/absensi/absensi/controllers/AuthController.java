@@ -14,6 +14,7 @@ import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.server.ResponseStatusException;
 
 import com.absensi.absensi.database.entities.DivisionEntity;
 import com.absensi.absensi.database.entities.EDivision;
@@ -183,78 +184,72 @@ public class AuthController {
             null
         );
 
-        Set<String> strDivision= data.getRole();
+        Set<String> strDivision = data.getDivision();
         Set<DivisionEntity> divisions = new HashSet<>();
         if (strDivision == null) {
-            DivisionEntity userRole = divisionRepository.findByName(EDivision.UNIT)
-                    .orElseThrow(() -> new RuntimeException("Error: Role is not found."));
-                    divisions.add(userRole);
+            DivisionEntity userDivision = divisionRepository.findByName(EDivision.UNIT)
+                    .orElseThrow(() -> new RuntimeException("Error: Division UNIT is not found."));
+            if (!userDivision.getIs_actived()) {
+                return ResponseHandler.errorResponseBuilder(
+                        "Division UNIT is not active!",
+                        HttpStatus.BAD_REQUEST
+                );
+            }
+            divisions.add(userDivision);
         } else {
-            strDivision.forEach(role -> {
-                switch (role) {
-                    case "admin":
-                    DivisionEntity adminRole = divisionRepository.findByName(EDivision.DIREKTUR_UTAMA)
-                                .orElseThrow(() -> new RuntimeException("Error: Role is not found."));
-                        divisions.add(adminRole);
-                        break;
-                    case "reporting":
-                    DivisionEntity reportingRole = divisionRepository.findByName(EDivision.WAKIL_DIREKTUR)
-                                .orElseThrow(() -> new RuntimeException("Error: Role is not found."));
-                                divisions.add(reportingRole);
-                        break;
-                    case "hr":
-                    DivisionEntity hrRole = divisionRepository.findByName(EDivision.ENGINEER)
-                                .orElseThrow(() -> new RuntimeException("Error: Role is not found."));
-                                divisions.add(hrRole);
-                        break;
-                    case "payroll":
-                    DivisionEntity payrollRole = divisionRepository.findByName(EDivision.HEAD)
-                                .orElseThrow(() -> new RuntimeException("Error: Role is not found."));
-                                divisions.add(payrollRole);
-                        break;
-                    default:
-                    DivisionEntity userRole = divisionRepository.findByName(EDivision.IT)
-                                .orElseThrow(() -> new RuntimeException("Error: Role is not found."));
-                                divisions.add(userRole);
+            for (String divisionName : strDivision) {
+                EDivision divisionEnum;
+                try {
+                    divisionEnum = EDivision.valueOf(divisionName);
+                } catch (IllegalArgumentException e) {
+                    return ResponseHandler.errorResponseBuilder(
+                            "Invalid division name: " + divisionName,
+                            HttpStatus.BAD_REQUEST
+                    );
                 }
-            });
+
+                DivisionEntity division = divisionRepository.findByName(divisionEnum)
+                        .orElseThrow(() -> new ResponseStatusException(HttpStatus.BAD_REQUEST, "Error: Division " + divisionEnum + " is not found. [Root cause: Division not found in repository]"));
+                if (!division.getIs_actived()) {
+                    return ResponseHandler.errorResponseBuilder(
+                            "Division " + divisionEnum + " is not active!",
+                            HttpStatus.BAD_REQUEST
+                    );
+                }
+                divisions.add(division);
+            }
         }
 
         Set<String> strRoles = data.getRole();
         Set<RolesEntity> roles = new HashSet<>();
         if (strRoles == null) {
             RolesEntity userRole = rolesRepository.findByName(ERole.USER)
-                    .orElseThrow(() -> new RuntimeException("Error: Role is not found."));
+                    .orElseThrow(() -> new RuntimeException("Error: Role is not found. [Root cause: Role USER not found in repository]"));
             roles.add(userRole);
         } else {
-            strRoles.forEach(role -> {
-                switch (role) {
-                    case "admin":
-                        RolesEntity adminRole = rolesRepository.findByName(ERole.ADMIN)
-                                .orElseThrow(() -> new RuntimeException("Error: Role is not found."));
-                        roles.add(adminRole);
-                        break;
-                    case "reporting":
-                        RolesEntity reportingRole = rolesRepository.findByName(ERole.REPORTING)
-                                .orElseThrow(() -> new RuntimeException("Error: Role is not found."));
-                        roles.add(reportingRole);
-                        break;
-                    case "hr":
-                        RolesEntity hrRole = rolesRepository.findByName(ERole.HR)
-                                .orElseThrow(() -> new RuntimeException("Error: Role is not found."));
-                        roles.add(hrRole);
-                        break;
-                    case "payroll":
-                        RolesEntity payrollRole = rolesRepository.findByName(ERole.PAYROLL)
-                                .orElseThrow(() -> new RuntimeException("Error: Role is not found."));
-                        roles.add(payrollRole);
-                        break;
-                    default:
-                        RolesEntity userRole = rolesRepository.findByName(ERole.USER)
-                                .orElseThrow(() -> new RuntimeException("Error: Role is not found."));
-                        roles.add(userRole);
+            for (String role : strRoles) {
+                ERole roleEnum;
+                try {
+                    roleEnum = ERole.valueOf(role.toUpperCase());
+                } catch (IllegalArgumentException e) {
+                    return ResponseHandler.errorResponseBuilder(
+                            "Invalid role name: " + role,
+                            HttpStatus.BAD_REQUEST
+                    );
                 }
-            });
+
+                RolesEntity roleEntity = rolesRepository.findByName(roleEnum)
+                        .orElseThrow(() -> new RuntimeException("Error: Role " + roleEnum + " is not found. [Root cause: Role not found in repository]"));
+
+                if (!roleEntity.getIs_actived()) {
+                    return ResponseHandler.errorResponseBuilder(
+                            "Role " + roleEntity.getName() + " is not active!",
+                            HttpStatus.BAD_REQUEST
+                    );
+                }
+
+                roles.add(roleEntity);
+            }
         }
 
         user.setRoles(roles);
@@ -279,7 +274,6 @@ public class AuthController {
     }
 
     @GetMapping("/profile")
-    // @PreAuthorize("hasRole('USER')")
     public ResponseEntity<?> getUserProfile() {
         try {
             Authentication authentication = SecurityContextHolder.getContext().getAuthentication();

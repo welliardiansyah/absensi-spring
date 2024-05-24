@@ -2,8 +2,6 @@ package com.absensi.absensi.services;
 
 import java.util.*;
 import org.springframework.http.ResponseEntity;
-
-import com.absensi.absensi.database.entities.UsersEntity;
 import com.absensi.absensi.dto.UserPhotoRequest;
 
 public interface UserPhotoService {

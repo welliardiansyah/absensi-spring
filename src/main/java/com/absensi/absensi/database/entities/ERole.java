@@ -8,10 +8,5 @@ public enum ERole {
     MANAGER,
     HEAD,
     HR,
-    PAYROLL,;
-
-    boolean isEmpty() {
-        // TODO Auto-generated method stub
-        throw new UnsupportedOperationException("Unimplemented method 'isEmpty'");
-    }
+    PAYROLL,
 }

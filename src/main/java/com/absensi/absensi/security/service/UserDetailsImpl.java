@@ -7,7 +7,6 @@ import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 
-import com.absensi.absensi.database.entities.DivisionEntity;
 import com.absensi.absensi.database.entities.UsersEntity;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 

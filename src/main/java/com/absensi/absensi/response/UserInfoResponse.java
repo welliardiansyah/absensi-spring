@@ -46,6 +46,4 @@ public class UserInfoResponse {
     public void setToken(String token) {
         this.token = token;
     }
-
-   
 }

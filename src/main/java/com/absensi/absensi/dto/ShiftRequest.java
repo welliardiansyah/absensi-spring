@@ -46,6 +46,4 @@ public class ShiftRequest {
     public void setDivisions(UUID divisions) {
         this.divisions = divisions;
     }
-
-    
 }
